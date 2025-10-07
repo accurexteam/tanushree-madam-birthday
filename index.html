@@ -1,0 +1,344 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Happy Birthday, Tanushree Roy</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Lato:wght@300;400;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/Draggable.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/tone/14.7.77/Tone.js"></script>
+
+    <style>
+        body {
+            font-family: 'Lato', sans-serif;
+            background-color: #FFF8F5;
+            overflow-x: hidden; /* Allow vertical scroll, prevent horizontal */
+            cursor: default;
+        }
+        .font-playfair { font-family: 'Playfair Display', serif; }
+        .text-custom-peach { color: #E8A09A; }
+        .bg-custom-peach-light { background-color: #F8E8E5; }
+
+        /* Canvas for particle effects */
+        #particle-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 15;
+            pointer-events: none;
+        }
+
+        /* Draggable Image Styles */
+        .floating-image {
+            position: fixed;
+            width: 120px; /* Base size for mobile */
+            height: auto;
+            border-radius: 12px;
+            border: 5px solid white;
+            box-shadow: 0 15px 40px rgba(40, 20, 10, 0.2);
+            z-index: 50;
+            cursor: grab;
+            opacity: 0;
+        }
+        @media (min-width: 640px) { /* sm breakpoint */
+            .floating-image { width: 180px; }
+        }
+        @media (min-width: 1024px) { /* lg breakpoint */
+            .floating-image { width: 220px; }
+        }
+        .floating-image:active {
+            cursor: grabbing;
+            box-shadow: 0 20px 50px rgba(40, 20, 10, 0.3);
+        }
+        
+        /* Balloon Styles */
+        .balloon {
+            position: fixed;
+            bottom: -200px;
+            width: 60px;
+            height: 75px;
+            border-radius: 50%;
+            z-index: 10;
+            opacity: 0.7;
+        }
+        .balloon::after {
+            content: ''; position: absolute; bottom: -8px; left: 50%;
+            transform: translateX(-50%); width: 1px; height: 40px;
+            background: rgba(0,0,0,0.2);
+        }
+        
+        /* Mute Button */
+        #mute-button {
+            position: fixed; top: 20px; right: 20px; z-index: 100; cursor: pointer;
+            background: white; border-radius: 50%; padding: 8px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); display: flex;
+            align-items: center; justify-content: center;
+        }
+
+        /* 3D effect for letter card */
+        .main-container {
+             perspective: 1000px;
+        }
+    </style>
+</head>
+<body class="text-gray-700 antialiased">
+
+    <canvas id="particle-canvas"></canvas>
+    <div id="balloon-container"></div>
+
+    <img src="images/tanushree1.jpg" alt="Photo of Tanushree Roy" class="floating-image">
+    <img src="images/tanushree2.jpg" alt="Photo of Tanushree Roy" class="floating-image">
+    <img src="images/tanushree3.jpg" alt="Photo of Tanushree Roy" class="floating-image">
+
+    <div id="mute-button" title="Toggle Music">
+        <svg id="music-on-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l12-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+        <svg id="music-off-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="display: none;"><path d="M9 18V5l12-2v13M15.54 15.54 9.46 9.46"/><circle cx="6" cy="18" r="3"/><circle cx="18" cy="16" r="3"/></svg>
+    </div>
+
+    <div class="main-container relative z-20 container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
+        <div class="max-w-3xl mx-auto text-center" id="header-content">
+            <span class="inline-block bg-custom-peach-light text-custom-peach text-sm font-semibold px-4 py-1 rounded-full mb-6 anim-element">A Special Day</span>
+            <h1 class="font-playfair text-3xl sm:text-4xl md:text-6xl font-bold text-gray-800 anim-element">Happy Birthday,</h1>
+            <h2 class="font-playfair text-4xl sm:text-5xl md:text-7xl font-bold text-custom-peach mt-2 anim-element">Madaam</h2>
+            <p class="mt-6 text-base md:text-lg text-gray-600 max-w-xl mx-auto anim-element">To the teacher who turned every lesson into poetry, and every word into magic.</p>
+        </div>
+
+        <div id="letter-card" class="bg-white rounded-2xl shadow-xl p-6 sm:p-8 md:p-12 mt-16 max-w-3xl mx-auto text-left leading-relaxed text-gray-600 transform-gpu">
+            <p class="mb-6 anim-p">Dear Ma'am,</p>
+            <p class="mb-6 anim-p">There are teachers who teach subjects, and then there are those rare souls who teach us how to feel, how to think, and how to see beauty in the world. You belong to the second kind — the kind we never forget.</p>
+            <p class="mb-6 anim-p">Your elegance is not just in how you speak, but in how you listen. Your kindness is not just in what you say, but in how you inspire us to believe in ourselves. You’ve taught me that English is not just a language — it’s a way of connecting, understanding, and feeling alive.</p>
+            <p class="mb-6 anim-p">Through your words, you've painted worlds. Through your passion, you've sparked curiosity. Through your warmth, you've made learning feel like coming home.</p>
+            <p class="mb-6 anim-p">On your special day, I want you to know: Happy birthday madam.. Stay happy and smiling always.. Don't get extra stress.. Stress or tension didn't suit you.. Once again Happy birthday and thanku for come in amy life❤️‍🩹</p>
+            <p class="mb-6 anim-p">May your day be as beautiful as the lessons you’ve shared, and as inspiring as the person you are.</p>
+            <p class="text-right mt-10 font-playfair italic text-custom-peach anim-p">— by Karnaka</p>
+        </div>
+
+        <div class="text-center mt-16 md:mt-24" id="footer-quote">
+            <p class="font-playfair text-xl md:text-3xl text-gray-500 anim-element">The best teachers don't just teach lessons, they teach life.</p>
+            <p class="font-playfair text-2xl md:text-4xl text-custom-peach mt-1 anim-element">Happy Birthday Mam:)</p>
+        </div>
+
+        <footer class="text-center pt-16 pb-8 text-gray-500 text-sm" id="page-footer">
+            <p class="anim-element italic text-gray-400 mb-4">
+                Follow karlo please, it took lots of hard work to make 🙏
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-x-6 gap-y-2 anim-element">
+                <p>
+                    Developed with ☕ by
+                    <a href="https://www.instagram.com/notpiyush.kun/" target="_blank" rel="noopener noreferrer" class="font-semibold text-gray-600 hover:text-custom-peach underline transition-colors">
+                        Piyush Chakraborty
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block w-4 h-4 ml-1 relative -top-px"><rect x="2" y="2" width="20" height="20" rx="5" ry="5"></rect><path d="M16 11.37A4 4 0 1 1 12.63 8 4 4 0 0 1 16 11.37z"></path><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"></line></svg>
+                    </a>
+                </p>
+                <span class="hidden sm:inline">|</span>
+                <p>
+                    An
+                    <a href="https://bento.me/accurexteam" target="_blank" rel="noopener noreferrer" class="font-semibold text-gray-600 hover:text-custom-peach underline transition-colors">
+                        Accurex Team Initiative
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="inline-block w-4 h-4 ml-1 relative -top-px"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"></path><polyline points="15 3 21 3 21 9"></polyline><line x1="10" y1="14" x2="21" y2="3"></line></svg>
+                    </a>
+                </p>
+            </div>
+        </footer>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const balloonContainer = document.getElementById('balloon-container');
+            const partyColors = ['#FFADAD', '#FFD6A5', '#FDFFB6', '#CAFFBF', '#9BF6FF', '#A0C4FF', '#BDB2FF', '#FFC6FF'];
+            const canvas = document.getElementById('particle-canvas');
+            const ctx = canvas.getContext('2d');
+            let particles = [];
+
+            function resizeCanvas() {
+                canvas.width = window.innerWidth;
+                canvas.height = window.innerHeight;
+            }
+            resizeCanvas();
+            window.addEventListener('resize', resizeCanvas);
+
+            class Particle {
+                constructor(x, y, isBlast = false) {
+                    this.x = x; this.y = y; this.isBlast = isBlast;
+                    const angle = Math.random() * Math.PI * 2;
+                    const speed = isBlast ? Math.random() * 8 + 4 : Math.random() * 2 + 1;
+                    this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+                    this.lifespan = isBlast ? Math.random() * 60 + 90 : Math.random() * 20 + 30;
+                    this.size = isBlast ? Math.random() * 10 + 5 : Math.random() * 3 + 2;
+                    this.color = partyColors[Math.floor(Math.random() * partyColors.length)];
+                    this.gravity = isBlast ? 0.12 : 0.05;
+                    this.rotation = Math.random() * 360;
+                    this.rotationSpeed = (Math.random() - 0.5) * 10;
+                }
+                update() {
+                    this.x += this.vx; this.y += this.vy; this.vy += this.gravity;
+                    this.vx *= 0.98; this.lifespan--; this.rotation += this.rotationSpeed;
+                }
+                draw() {
+                    ctx.save();
+                    ctx.translate(this.x, this.y);
+                    ctx.rotate(this.rotation * Math.PI / 180);
+                    ctx.fillStyle = this.color;
+                    ctx.fillRect(-this.size / 2, -this.size / 2, this.size, this.size * 0.6);
+                    ctx.restore();
+                }
+            }
+            
+            function createBlast(x, y, count = 100) {
+                for (let i = 0; i < count; i++) {
+                    particles.push(new Particle(x, y, true));
+                }
+            }
+
+            function animateParticles() {
+                ctx.clearRect(0, 0, canvas.width, canvas.height);
+                particles = particles.filter(p => p.lifespan > 0);
+                particles.forEach(p => { p.update(); p.draw(); });
+                requestAnimationFrame(animateParticles);
+            }
+            animateParticles();
+
+            // Mobile-friendly touch and mouse events for effects
+            function handleMove(e) {
+                const coords = e.touches ? e.touches[0] : e;
+                particles.push(new Particle(coords.clientX, coords.clientY, false));
+            }
+            document.addEventListener('mousemove', handleMove);
+            document.addEventListener('touchmove', handleMove);
+
+            function handleInteraction(e) {
+                if (e.target.closest('.floating-image, #mute-button')) return;
+                const coords = e.touches ? e.touches[0] : e;
+                createBlast(coords.clientX, coords.clientY, 50);
+            }
+            document.addEventListener('mousedown', handleInteraction);
+            document.addEventListener('touchstart', handleInteraction);
+
+            function spawnBalloons(x, y, count = 3) {
+                for (let i = 0; i < count; i++) {
+                    const balloon = document.createElement('div');
+                    balloon.className = 'balloon';
+                    balloon.style.backgroundColor = partyColors[Math.floor(Math.random() * partyColors.length)];
+                    balloon.style.left = `${x}px`; balloon.style.top = `${y}px`;
+                    balloonContainer.appendChild(balloon);
+                    gsap.to(balloon, {
+                        y: -window.innerHeight - 300, duration: Math.random() * 5 + 8, ease: 'power1.in',
+                        delay: Math.random() * 0.5, onComplete: () => balloon.remove()
+                    });
+                    gsap.to(balloon, {
+                        x: `+=${(Math.random() - 0.5) * 200}`, duration: 8, ease: 'sine.inOut', yoyo: true, repeat: -1
+                    });
+                }
+            }
+            for (let i = 0; i < 10; i++) {
+                spawnBalloons(Math.random() * window.innerWidth, window.innerHeight + 100, 1);
+            }
+            
+            // --- DRAGGABLE IMAGES (WITH RESPONSIVE POSITIONS) ---
+            const images = document.querySelectorAll('.floating-image');
+            
+            function getInitialPositions() {
+                // Mobile-first positions
+                if (window.innerWidth < 768) { 
+                    return [
+                        { top: '12vh', left: '5vw', rotation: -8 },
+                        { top: '55vh', left: '10vw', rotation: 10 },
+                        { top: '25vh', left: '55vw', rotation: 5 } // Pulled in from the edge
+                    ];
+                }
+                // Desktop positions
+                return [
+                    { top: '15vh', left: '10vw', rotation: -8 },
+                    { top: '60vh', left: '25vw', rotation: 10 },
+                    { top: '30vh', left: '70vw', rotation: 5 }
+                ];
+            }
+            const initialPositions = getInitialPositions();
+
+            images.forEach((img, i) => {
+                gsap.to(img, {
+                    ...initialPositions[i], opacity: 1, duration: 1.5, delay: 1.5 + i * 0.2, ease: 'power3.out'
+                });
+                gsap.to(img, {
+                    scale: 1.03, rotation: initialPositions[i].rotation + (Math.random() - 0.5) * 4,
+                    duration: Math.random() * 3 + 4, repeat: -1, yoyo: true, ease: 'sine.inOut', delay: 2 + i
+                });
+                img.addEventListener('mouseenter', () => createBlast(
+                    gsap.getProperty(img, "x") + img.offsetWidth / 2,
+                    gsap.getProperty(img, "y") + img.offsetHeight / 2,
+                    20
+                ));
+
+                Draggable.create(img, {
+                    bounds: 'body',
+                    onPress: function() {
+                        gsap.to(this.target, { scale: 1.1, duration: 0.3, ease: 'power3.out' });
+                    },
+                    onClick: function() {
+                        createBlast(this.x + this.width / 2, this.y + this.height / 2);
+                        spawnBalloons(this.x + this.width / 2, this.y + this.height / 2, 5);
+                    },
+                    onDragEnd: function() {
+                        createBlast(this.x + this.width / 2, this.y + this.height / 2, 150);
+                        spawnBalloons(this.x + this.width / 2, this.y + this.height / 2, 8);
+                        gsap.to(this.target, { scale: 1, duration: 0.3, ease: 'power3.out' });
+                    }
+                });
+            });
+            
+            // 3D Letter Card Interaction (Desktop-only effect, graceful degradation on mobile)
+            const letterCard = document.getElementById('letter-card');
+            letterCard.addEventListener('mousemove', e => {
+                const rect = letterCard.getBoundingClientRect();
+                const x = e.clientX - rect.left;
+                const y = e.clientY - rect.top;
+                const rotateX = gsap.utils.mapRange(0, rect.height, -8, 8, y);
+                const rotateY = gsap.utils.mapRange(0, rect.width, 8, -8, x);
+                gsap.to(letterCard, { rotationX: rotateX, rotationY: rotateY, duration: 0.7, ease: 'power3.out' });
+            });
+            letterCard.addEventListener('mouseleave', () => {
+                gsap.to(letterCard, { rotationX: 0, rotationY: 0, duration: 0.7, ease: 'elastic.out(1, 0.5)' });
+            });
+
+
+            // --- MUSIC SETUP ---
+            let musicStarted = false;
+            const synth = new Tone.Synth().toDestination();
+            const melody = [
+                { note: 'C4', duration: '8n', time: '0:0' }, { note: 'C4', duration: '8n', time: '0:1' },
+                { note: 'D4', duration: '4n', time: '0:2' }, { note: 'C4', duration: '4n', time: '0:3' },
+                { note: 'F4', duration: '4n', time: '1:0' }, { note: 'E4', duration: '2n', time: '1:1' },
+                { note: 'C4', duration: '8n', time: '2:0' }, { note: 'C4', duration: '8n', time: '2:1' },
+                { note: 'D4', duration: '4n', time: '2:2' }, { note: 'C4', duration: '4n', time: '2:3' },
+                { note: 'G4', duration: '4n', time: '3:0' }, { note: 'F4', duration: '2n', time: '3:1' },
+                { note: 'C4', duration: '8n', time: '4:0' }, { note: 'C4', duration: '8n', time: '4:1' },
+                { note: 'C5', duration: '4n', time: '4:2' }, { note: 'A4', duration: '4n', time: '4:3' },
+                { note: 'F4', duration: '4n', time: '5:0' }, { note: 'E4', duration: '4n', time: '5:1' }, { note: 'D4', duration: '4n', time: '5:2' },
+                { note: 'A#4', duration: '8n', time: '6:0' }, { note: 'A#4', duration: '8n', time: '6:1' },
+                { note: 'A4', duration: '4n', time: '6:2' }, { note: 'F4', duration: '4n', time: '6:3' },
+                { note: 'G4', duration: '4n', time: '7:0' }, { note: 'F4', duration: '2n', time: '7:1' },
+            ];
+            const part = new Tone.Part((time, value) => synth.triggerAttackRelease(value.note, value.duration, time), melody).start(0);
+            part.loop = true; part.loopEnd = '8m';
+            function startMusic() { if (!musicStarted) { Tone.start(); Tone.Transport.start(); musicStarted = true; } }
+            document.body.addEventListener('click', startMusic, { once: true });
+            const muteBtn = document.getElementById('mute-button'), onIcon = document.getElementById('music-on-icon'), offIcon = document.getElementById('music-off-icon');
+            muteBtn.addEventListener('click', e => { e.stopPropagation(); if (Tone.Transport.state === 'started') { Tone.Transport.pause(); onIcon.style.display = 'none'; offIcon.style.display = 'block'; } else { startMusic(); Tone.Transport.start(); onIcon.style.display = 'block'; offIcon.style.display = 'none'; } });
+
+            // --- PAGE CONTENT ANIMATION ---
+            const tl = gsap.timeline({ defaults: { ease: 'power3.out' } });
+            tl.from('#header-content .anim-element', { opacity: 0, y: 30, stagger: 0.2, duration: 1 })
+            .from('#letter-card', { opacity: 0, scale: 0.95, y: 20, duration: 0.8 }, '-=0.5')
+            .from('.anim-p', { opacity: 0, y: 20, stagger: 0.1, duration: 0.6 }, '-=0.5')
+            .from('#footer-quote .anim-element', { opacity: 0, y: 30, stagger: 0.2, duration: 1 }, '-=0.5')
+            .from('#page-footer .anim-element', { opacity: 0, y: 20, stagger: 0.2, duration: 0.8 }, '-=0.7');
+        });
+    </script>
+</body>
+</html>
